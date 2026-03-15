@@ -1,5 +1,5 @@
 # GPU-Accelerated Knowledge Graph Construction Pipeline
-
+![Alt image](https://github.com/Dr-Westworld/knowledge-graph-Nvidia-T4-GPU-Accelerated/blob/main/gpu_kg_pipeline_architecture.svg)
 A GPU-first, memory-aware pipeline that converts unstructured text into an interactive knowledge graph using on-device LLM extraction, GPU-based canonicalization, and GPU graph analytics.  
 Optimized for **Google Colab T4**–class GPUs.
 
