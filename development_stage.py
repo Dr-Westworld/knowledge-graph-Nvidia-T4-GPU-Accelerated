@@ -1,5 +1,5 @@
 """
-GPU-Accelerated Knowledge Graph Pipeline - Interconnected Version
+GPU-Accelerated Knowledge Graph Pipeline
 ==================================================================
 GPU: cuDF, cuGraph, Model inference
 Features: Hub nodes, dense connectivity, type-aware WSD
@@ -53,9 +53,6 @@ if torch.cuda.is_available():
     print(f"✓ GPU: {torch.cuda.get_device_name(0)}")
 print("="*60 + "\n")
 
-# ============================================================================
-# CONFIGURATION
-# ============================================================================
 
 @dataclass
 class PipelineConfig:
@@ -80,9 +77,6 @@ class PipelineConfig:
 
 config = PipelineConfig()
 
-# ============================================================================
-# UTILITY FUNCTIONS
-# ============================================================================
 
 def cleanup_memory():
     """Aggressive memory cleanup"""
@@ -127,9 +121,7 @@ def full_reset():
         TripleExtractor._tokenizer = None
     print("✓ Memory reset complete")
 
-# ============================================================================
-# TOON GRAMMAR PARSER
-# ============================================================================
+# regionTOON GRAMMAR PARSER
 
 def parse_toon_block(text: str) -> List[Tuple[str, str, str, str, str, float]]:
     """
@@ -174,9 +166,9 @@ def parse_toon_block(text: str) -> List[Tuple[str, str, str, str, str, float]]:
 
     return triples
 
-# ============================================================================
-# TEXT CHUNKING
-# ============================================================================
+#endregion
+
+#region TEXT CHUNKING
 
 class TextChunker:
     """Token-aware chunking with safe boundaries"""
@@ -212,9 +204,11 @@ class TextChunker:
 
         return chunks if chunks else [text]
 
-# ============================================================================
-# GPU TRIPLE EXTRACTION WITH INTERCONNECTION
-# ============================================================================
+#endregion
+
+
+
+#region GPU TRIPLE EXTRACTION WITH INTERCONNECTION
 
 class TripleExtractor:
     """GPU-based triple extraction with dense connectivity"""
@@ -492,9 +486,10 @@ Output TOON triples:"""
         
         return results
 
-# ============================================================================
-# GPU TRIPLE STORAGE WITH WSD
-# ============================================================================
+#endregion
+
+
+#region GPU TRIPLE STORAGE WITH WSD
 
 class GPUTripleStore:
     """cuDF-based triple storage with type-aware disambiguation"""
@@ -638,9 +633,11 @@ class GPUTripleStore:
 
         return agg_df
 
-# ============================================================================
-# GPU GRAPH ANALYTICS
-# ============================================================================
+#endregion
+
+
+#region GPU GRAPH ANALYTICS
+
 
 class GPUGraphAnalyzer:
     """cuGraph-based analytics"""
@@ -683,9 +680,10 @@ class GPUGraphAnalyzer:
 
         return metrics
 
-# ============================================================================
-# ENHANCED VISUALIZATION
-# ============================================================================
+#endregion
+
+
+#region ENHANCED VISUALIZATION
 
 class PyVisAdapter:
     """PyVis with hub node visualization"""
@@ -882,9 +880,10 @@ class PyVisAdapter:
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(html_content)
 
-# ============================================================================
-# MAIN PIPELINE
-# ============================================================================
+#endregion
+
+
+#region MAIN PIPELINE
 
 class StreamableKGPipeline:
     """Main orchestrator with hub detection"""
@@ -980,9 +979,9 @@ class StreamableKGPipeline:
 
         return edges_df, metrics, network
 
-# ============================================================================
-# GPU-DIRECT STORAGE
-# ============================================================================
+#endregion
+
+#region GPU-DIRECT STORAGE
 
 class GPUDirectStorage:
     """Checkpointing"""
@@ -1010,10 +1009,11 @@ class GPUDirectStorage:
             print(f" Checkpoint failed: {e}")
 
         return filepath
+#endregion
 
-# ============================================================================
-# EXECUTION
-# ============================================================================
+
+#region EXECUTION
+
 
 def run_pipeline(input_text: str, output_path: str = "knowledge_graph.html"):
     """Execute pipeline"""
@@ -1060,10 +1060,9 @@ def run_pipeline(input_text: str, output_path: str = "knowledge_graph.html"):
 
     return network, edges_df
 
-# ============================================================================
-# SAMPLE DATA
-# ============================================================================
+#endregion
 
+#region  SAMPLE DATA
 
 SAMPLE_TEXT = """
 The evolution of artificial intelligence represents one of the most transformative technological
@@ -1171,9 +1170,7 @@ Machine Learning services integrated with OpenAI models. These platforms reduced
 businesses of all sizes.
 """
 
-# ============================================================================
-# RUN
-# ============================================================================
+#endregion
 
 if __name__ == "__main__":
     full_reset()
