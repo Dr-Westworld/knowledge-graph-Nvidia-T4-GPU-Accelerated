@@ -125,5 +125,4 @@ Defaults are tuned for Colab T4 GPUs.
 
 ## License
 
-MIT License (update if needed).  
-Model weights and datasets are subject to their respective licenses.
+
