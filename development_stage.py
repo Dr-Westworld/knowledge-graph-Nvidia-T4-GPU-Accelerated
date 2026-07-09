@@ -1,16 +1,5 @@
 """
-GPU-Accelerated Knowledge Graph Pipeline
-==================================================================
-GPU: cuDF, cuGraph, Model inference
-Features: Hub nodes, dense connectivity, type-aware WSD
-
-INSTALLATION:
-!pip install cudf-cu12 cugraph-cu12 --extra-index-url=https://pypi.nvidia.com
-!pip install transformers torch accelerate polars pyvis xxhash tqdm numba
-
-import os
-os.makedirs("./offload", exist_ok=True)
-os.makedirs("./checkpoints", exist_ok=True)
+very old version of the code
 """
 
 import torch
