@@ -102,8 +102,10 @@ Defaults are tuned for Colab T4 GPUs.
 ---
 
 ## output on cosmograph
+<img width="1786" height="952" alt="Screenshot 2026-07-05 191443" src="https://github.com/user-attachments/assets/d46b63b2-7833-4e5d-a7bc-640fcd1b300c" />
 
 <img width="1861" height="955" alt="image" src="https://github.com/user-attachments/assets/29603648-2f63-4c97-b06f-c91a4cbbdb1d" />
+
 
 
 ## Future improvements
