@@ -1,7 +1,7 @@
 [project]
-name = "Knowlwdge_Graph"
-version = "0.1.0"
-description = "A lightweight Flask-based web app to generate interactive knowledge graphs from documents."
+name = "gpu-knowledge-graph-pipeline"
+version = "1.0.0"
+description = "GPU-aware PDF-to-knowledge-graph pipeline with isolated vLLM extraction, validation, resolution, and graph analytics."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
@@ -10,19 +10,21 @@ authors = [
     { name = "Om Gawade", email = "gawade1420@gmail.com" }
 ]
 
-# Optional project URLs
-urls = { 
+urls = {
     "Homepage" = "https://github.com/Dr-Westworld",
-    "Repository" = "https://github.com/Dr-Westworld/knowledge-graph",
-    "Issues" = "https://github.com/Dr-Westworld/knowlwdge-graph/issues"
+    "Repository" = "https://github.com/Dr-Westworld/gpu-knowledge-graph-pipeline",
+    "Issues" = "https://github.com/Dr-Westworld/gpu-knowledge-graph-pipeline/issues"
 }
 
+# The CUDA/RAPIDS/vLLM runtime is intentionally installed by the notebook;
+# keeping it out of the default metadata prevents a CPU/Windows install from
+# pretending to be a complete GPU environment.
 dependencies = [
     "flask",
     "pyvis",
     "networkx",
-    "pypd",
-    "python-docx>=0.8.11",  
+    "pypdf>=5.0.0",
+    "python-docx>=0.8.11",
     "chardet>=5.2.0"
 ]
 

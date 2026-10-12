@@ -1,0 +1,30 @@
+# Python caches and build products
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Local environments and credentials
+.venv/
+.env
+.env.*
+!.env.example
+
+# Pipeline outputs and runtime state
+tmp_graphs/
+kg_output/
+*.log
+*.jsonl
+wandb/
+
+# Notebook-generated local copies and editor state
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# Keep the supplied Nsight reports under profiling/ tracked intentionally.
+*.nsys-rep
+

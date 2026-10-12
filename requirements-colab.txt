@@ -1,0 +1,27 @@
+# Main Process A: install the CUDA 12 RAPIDS stack from NVIDIA's index.
+--extra-index-url=https://pypi.nvidia.com
+cudf-cu12
+cuml-cu12
+cugraph-cu12
+rmm-cu12
+
+# Pipeline and observability dependencies.
+rapidfuzz
+pymupdf
+python-Levenshtein
+xxhash
+tqdm
+ipywidgets
+polars
+networkx
+scipy
+sentence-transformers
+wandb
+langfuse
+prometheus_client
+psutil
+pydantic
+huggingface_hub[hf_transfer]
+
+# Prefer the GPU build when available; the notebook falls back to CPU FAISS.
+faiss-gpu-cu12

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPU Knowledge Graph Pipeline — v1 Explorer</title>
+  <style>
+    :root { --ink:#172033; --muted:#64748b; --paper:#f7fafc; --card:#fff; --line:#dbe5ef; --blue:#2563eb; --teal:#0f766e; --amber:#b45309; --rose:#be123c; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif; color:var(--ink); background:linear-gradient(135deg,#eef5ff,#f8fafc 55%,#effcf8); }
+    main { max-width:1180px; margin:auto; padding:44px 22px 72px; }
+    header { display:grid; grid-template-columns:1.4fr .8fr; gap:24px; align-items:end; margin-bottom:28px; }
+    h1 { margin:0 0 10px; font-size:clamp(2rem,4vw,4rem); line-height:1.04; letter-spacing:-.04em; }
+    h2 { margin-top:0; letter-spacing:-.02em; }
+    p { max-width:78ch; }
+    .eyebrow { color:var(--blue); font-weight:800; text-transform:uppercase; letter-spacing:.12em; font-size:.78rem; }
+    .lede { color:#334155; font-size:1.12rem; }
+    .stamp { padding:18px; border:1px solid var(--line); border-radius:18px; background:rgba(255,255,255,.75); box-shadow:0 12px 32px #b6c4d322; }
+    .stamp strong { display:block; font-size:1.35rem; }
+    nav { position:sticky; top:10px; z-index:4; display:flex; gap:8px; flex-wrap:wrap; padding:8px; border:1px solid var(--line); border-radius:14px; background:#ffffffdd; backdrop-filter:blur(12px); }
+    button { border:0; border-radius:10px; padding:10px 14px; cursor:pointer; color:var(--ink); background:#e9f0f7; font:inherit; font-weight:700; }
+    button[aria-selected="true"] { color:white; background:var(--blue); }
+    .panel { display:none; padding-top:28px; }
+    .panel.active { display:block; }
+    .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px; box-shadow:0 10px 24px #b6c4d31c; }
+    .card h3 { margin:0 0 6px; }
+    .pill { display:inline-block; margin:3px 4px 3px 0; padding:4px 9px; border-radius:999px; color:#0f3a74; background:#e4efff; font-size:.82rem; }
+    .callout { border-left:5px solid var(--teal); padding:14px 18px; background:#ecfdf5; border-radius:0 14px 14px 0; }
+    .warning { border-left-color:var(--amber); background:#fff7ed; }
+    .svg-wrap { overflow:auto; padding:10px; border:1px solid var(--line); border-radius:18px; background:#fcfeff; }
+    svg { min-width:760px; width:100%; height:auto; }
+    .node { fill:#fff; stroke:#8ba3bd; stroke-width:2; }
+    .node-a { fill:#eff6ff; stroke:#3b82f6; }
+    .node-b { fill:#ecfdf5; stroke:#0f766e; }
+    .node-c { fill:#fff7ed; stroke:#d97706; }
+    .node-d { fill:#fff1f2; stroke:#e11d48; }
+    .arrow { stroke:#64748b; stroke-width:2.3; marker-end:url(#arrow); }
+    .dashed { stroke-dasharray:7 6; }
+    .small { fill:#52657a; font-size:13px; }
+    .title { fill:#172033; font-size:15px; font-weight:750; }
+    code { padding:2px 5px; border-radius:5px; background:#eef2f7; }
+    pre { overflow:auto; padding:16px; border-radius:12px; color:#e5eef9; background:#0f172a; }
+    table { width:100%; border-collapse:collapse; background:white; border-radius:14px; overflow:hidden; }
+    th,td { padding:12px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
+    th { background:#eef5ff; }
+    footer { margin-top:42px; color:var(--muted); font-size:.9rem; }
+    @media (max-width:780px) { header,.grid { grid-template-columns:1fr; } main { padding-top:26px; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <div class="eyebrow">Version 1 · supplied notebook + Nsight artifacts</div>
+      <h1>From PDF to a graph you can inspect.</h1>
+      <p class="lede">An interactive map of the GPU Knowledge Graph Pipeline: structured extraction, validation, entity resolution, graph analytics, and observability.</p>
+    </div>
+    <div class="stamp"><span class="eyebrow">Observed run</span><strong>Tesla T4 · Qwen2.5-3B</strong><span>vLLM health and schema smoke tests passed in the supplied notebook. Full rerun still requires a Linux/CUDA environment.</span></div>
+  </header>
+
+  <nav role="tablist" aria-label="Explorer sections">
+    <button role="tab" aria-selected="true" data-panel="architecture">Architecture</button>
+    <button role="tab" aria-selected="false" data-panel="contracts">Contracts</button>
+    <button role="tab" aria-selected="false" data-panel="operations">Operations</button>
+    <button role="tab" aria-selected="false" data-panel="reading">Reading guide</button>
+  </nav>
+
+  <section id="architecture" class="panel active" role="tabpanel">
+    <div class="card">
+      <h2>One physical GPU, two Python processes</h2>
+      <p>The dependency boundary is Python-environment isolation; the resource boundary is shared GPU memory. Process A never imports vLLM. Process B never needs RAPIDS. They communicate through a localhost OpenAI-compatible API.</p>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 1080 420" role="img" aria-label="Two-process pipeline architecture diagram">
+          <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/></marker></defs>
+          <rect x="35" y="50" width="390" height="270" rx="22" class="node-a"/>
+          <text x="65" y="88" class="title">PROCESS A · RAPIDS + orchestration</text>
+          <text x="65" y="125" class="small">PDF → sections → chunks → ontology</text>
+          <text x="65" y="151" class="small">schema parse → validation → resolution</text>
+          <text x="65" y="177" class="small">GPU graph analytics → Parquet export</text>
+          <rect x="75" y="215" width="135" height="64" rx="12" class="node"/><text x="95" y="243" class="title">cuDF / cuGraph</text><text x="95" y="263" class="small">data + graph</text>
+          <rect x="235" y="215" width="150" height="64" rx="12" class="node"/><text x="255" y="243" class="title">cuML / CuPy</text><text x="255" y="263" class="small">ANN + tensors</text>
+          <rect x="655" y="50" width="390" height="270" rx="22" class="node-b"/>
+          <text x="685" y="88" class="title">PROCESS B · isolated vLLM venv</text>
+          <text x="685" y="125" class="small">Qwen2.5-3B-Instruct-AWQ</text>
+          <text x="685" y="151" class="small">structured_outputs.json</text>
+          <text x="685" y="177" class="small">native /metrics endpoint</text>
+          <rect x="735" y="215" width="230" height="64" rx="12" class="node"/><text x="770" y="243" class="title">OpenAI-compatible HTTP</text><text x="815" y="263" class="small">localhost:8000</text>
+          <line x1="425" y1="185" x2="655" y2="185" class="arrow"/><text x="482" y="166" class="small">JSON over localhost</text>
+          <rect x="350" y="350" width="380" height="48" rx="18" class="node-c"/><text x="438" y="380" class="title">Shared GPU memory · tune 0.45 deliberately</text>
+          <line x1="230" y1="320" x2="450" y2="350" class="arrow dashed"/><line x1="850" y1="320" x2="650" y2="350" class="arrow dashed"/>
+        </svg>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:16px">
+      <article class="card"><h3>1 · Make text usable</h3><p>PyMuPDF extracts sections; <code>TextChunker</code> keeps prompts bounded while preserving overlap across boundaries.</p><span class="pill">PDF</span><span class="pill">chunking</span></article>
+      <article class="card"><h3>2 · Make generation constrained</h3><p>The model emits a bounded JSON object. Enumerated types and predicates make malformed output observable instead of silently accepted.</p><span class="pill">vLLM</span><span class="pill">JSON Schema</span></article>
+      <article class="card"><h3>3 · Make the graph useful</h3><p>Validation, alias resolution, ANN proposals, PageRank, and Leiden communities turn raw triples into a queryable artifact.</p><span class="pill">cuML</span><span class="pill">cuGraph</span></article>
+    </div>
+  </section>
+
+  <section id="contracts" class="panel" role="tabpanel">
+    <div class="card">
+      <h2>Every boundary has a contract</h2>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 1080 300" role="img" aria-label="Validation pipeline diagram">
+          <defs><marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/></marker></defs>
+          <line x1="90" y1="145" x2="980" y2="145" class="arrow" marker-end="url(#arrow2)"/>
+          <g transform="translate(20 90)"><rect width="150" height="110" rx="16" class="node-a"/><text x="24" y="42" class="title">Raw response</text><text x="24" y="68" class="small">text / fenced JSON</text><text x="24" y="88" class="small">from vLLM</text></g>
+          <g transform="translate(205 90)"><rect width="150" height="110" rx="16" class="node"/><text x="28" y="42" class="title">Parse</text><text x="28" y="68" class="small">decode + unwrap</text><text x="28" y="88" class="small">JSON object</text></g>
+          <g transform="translate(390 90)"><rect width="150" height="110" rx="16" class="node"/><text x="22" y="42" class="title">Validate</text><text x="22" y="68" class="small">Pydantic + rules</text><text x="22" y="88" class="small">drop reasons</text></g>
+          <g transform="translate(575 90)"><rect width="150" height="110" rx="16" class="node-c"/><text x="22" y="42" class="title">Resolve</text><text x="22" y="68" class="small">aliases + ANN</text><text x="22" y="88" class="small">provenance</text></g>
+          <g transform="translate(760 90)"><rect width="150" height="110" rx="16" class="node-b"/><text x="20" y="42" class="title">Graph</text><text x="20" y="68" class="small">nodes + edges</text><text x="20" y="88" class="small">analytics/export</text></g>
+          <text x="400" y="255" class="small">Invalid data is dropped with a measurable reason; accepted data is never silently indistinguishable from proposed data.</text>
+        </svg>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:16px">
+      <article class="card"><h3>Allowed entity types</h3><p>PERSON, ORGANIZATION, CONCEPT, PRODUCT, LOCATION, EVENT, LAW, METRIC, PROCESS, DOCUMENT, TECHNOLOGY, PROVISION.</p></article>
+      <article class="card"><h3>Allowed predicates</h3><p><code>regulates</code>, <code>requires</code>, <code>produces</code>, <code>located_in</code>, <code>depends_on</code>, and the rest of the v1 ontology.</p></article>
+      <article class="card"><h3>Bounded output</h3><p>Maximum 20 triples per chunk; entity strings are bounded; exactly five fields are required per triple.</p></article>
+    </div>
+    <div class="callout" style="margin-top:16px"><strong>Why schema, not regex?</strong> The notebook records a regex grammar timeout. JSON Schema expresses the same ontology constraints through optimized enums and bounded arrays, and the smoke test verifies that the server actually enforces them.</div>
+  </section>
+
+  <section id="operations" class="panel" role="tabpanel">
+    <div class="grid">
+      <article class="card"><h3>Observed in the notebook</h3><p>RAPIDS imports succeeded. The server became healthy in about 50 seconds. The plain request returned 386 characters in 9.1 seconds; the schema-constrained request returned valid JSON with two triples in 9.6 seconds.</p></article>
+      <article class="card"><h3>Included evidence</h3><p>Two binary Nsight reports are preserved under <code>profiling/</code>, with SHA-256 hashes and exact export/open commands in the profiling guide.</p></article>
+      <article class="card"><h3>Not claimed</h3><p>This checkout has not been presented as a full local GPU rerun. Notebook v2 is not included in the validated path. DPO/DSPy cells are optional experiments.</p></article>
+    </div>
+    <div class="card" style="margin-top:16px"><h2>Observability lanes</h2><table><thead><tr><th>Signal</th><th>Tool</th><th>What it answers</th></tr></thead><tbody><tr><td>Prompt, generation, validation</td><td>Langfuse</td><td>Why did this chunk produce or lose a triple?</td></tr><tr><td>Batch, graph, and vLLM metrics</td><td>Weights &amp; Biases</td><td>How did quality and runtime move together?</td></tr><tr><td>Kernel and CUDA API timeline</td><td>Nsight Systems</td><td>Where does GPU time or synchronization go?</td></tr></tbody></table></div>
+    <div class="callout warning" style="margin-top:16px"><strong>Publishing reminder:</strong> Nsight files may contain command lines, paths, model names, environment variables, or notebook metadata. Review new reports before making them public.</div>
+  </section>
+
+  <section id="reading" class="panel" role="tabpanel">
+    <div class="card"><h2>Suggested code-reading order</h2><ol><li>Start with the module header in <code>kg_pipeline.py</code>; it explains the process split and memory assumptions.</li><li>Read <code>PipelineConfig</code> and the ontology constants to understand the operating envelope.</li><li>Follow <code>TextChunker</code> → <code>VLLMTripleExtractor</code> → <code>parse_json_triples</code> → <code>sitl_filter</code>.</li><li>Inspect <code>resolve_entities_in_edges</code>, the semantic/ANN resolvers, and then <code>GPUGraphAnalyzer</code>.</li><li>Finish with <code>export_to_parquet</code>, <code>LangfuseTracer</code>, and <code>VLLMMetricsPoller</code>.</li><li>Use <code>scripts/test_vllm_server.py</code> as the smallest executable contract for Process B.</li></ol></div>
+    <div class="card" style="margin-top:16px"><h2>Minimal command set</h2><pre>python scripts/validate_repo.py
+python -m py_compile kg_pipeline.py scripts/test_vllm_server.py
+python scripts/test_vllm_server.py --base-url http://localhost:8000</pre></div>
+    <div class="callout" style="margin-top:16px">For the full written treatment, read <code>README.md</code>, <code>docs/architecture.md</code>, <code>docs/data-contract.md</code>, and <code>docs/profiling.md</code>.</div>
+  </section>
+
+  <footer>GPU Knowledge Graph Pipeline · v1 · The interactive explainer is self-contained and has no external JavaScript or network dependency.</footer>
+</main>
+<script>
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  const panels = [...document.querySelectorAll('[role="tabpanel"]')];
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    tabs.forEach(t => t.setAttribute('aria-selected', String(t === tab)));
+    panels.forEach(panel => panel.classList.toggle('active', panel.id === tab.dataset.panel));
+  }));
+</script>
+</body>
+</html>
