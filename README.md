@@ -127,6 +127,9 @@ Each extraction response is a JSON object containing bounded, typed triples:
 
 The schema enumerates entity types and predicates, limits entity length and triple count, requires exactly five fields per triple, and rejects additional properties. See [`docs/data-contract.md`](docs/data-contract.md).
 
+## Output on cosmograph
+<img width="1800" height="960" alt="Screenshot 2026-07-05 191443" src="https://github.com/user-attachments/assets/d46b63b2-7833-4e5d-a7bc-640fcd1b300c" />
+
 ## Reproduce the supplied v1 run
 
 The v1 execution target is Linux/Colab with an NVIDIA GPU:
